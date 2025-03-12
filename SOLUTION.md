@@ -1,4 +1,4 @@
-## Problems
+## Initial Problems
 
 ### ERR_OSSL_EVP_UNSUPPORTED
 
@@ -353,3 +353,50 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 38 +     parseInt(user?.firstName && user?.firstName[1] ? user?.firstName[1] : "m", 36) * 7
 ...
 ```
+
+## Challenge Proposed
+
+### Console error: Warning: Each child in a list should have a unique "key" prop.
+
+Hope you are able to find what is causing this error, as it is annoying.
+
+### The word "known" should be displayed bold in the introduction text.
+
+When implementing a solution, please ensure to not change the i18n text.
+
+### User avatar in app bar is missing, although user should be fetched on app start correctly.
+
+On app start we load the current user object via a MobX store, but for any reason the user avatar is not displayed in the top right of the app bar. Attention: When solving this issue, you might will be confronted with a second bug.
+
+### Optional: Countdown is broken sometimes (hard to reproduce).
+
+Some developers mentioned that the countdown in the app header behaves strange sometimes, but unfortunately they were not able to reproduce this glitch reliably, maybe you find the root cause.
+
+#### Solution
+
+The countdown timer in AppHeader is causing memory leaks because the setInterval is created but never cleared:
+
+```typescript
+// src/components/AppHeader/index.tsx
+...
+<<<
+45 - useEffect(() => {
+46 -     setInterval(() => {
+47 -         setCount((c) => c + 1);
+48 -     }, 1000);
+49 - }, []);
+>>>
+45 + useEffect(() => {
+46 +     const timer = setInterval(() => {
+47 +       setCount((c) => c + 1);
+48 +     }, 1000);
+49 +     
+50 +     // Clean up the interval when component unmounts
+51 +     return () => clearInterval(timer);
+52 + }, []);
+...
+```
+
+### Optional: It would be great to be able to switch the language.
+
+Please add a language select control in the app bar to swicth the UI language between english and german.
