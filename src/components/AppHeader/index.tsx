@@ -1,4 +1,4 @@
-import { Grow, Box, Theme, Toolbar, Typography } from '@mui/material';
+import { Grow, Box, Theme, Toolbar, Typography, Select, MenuItem, SelectChangeEvent } from '@mui/material';
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import { styled, useTheme } from '@mui/material/styles';
 import React, { useEffect, useState } from 'react';
@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { User } from '../../api/services/User/store';
 import AvatarMenu from '../AvatarMenu';
 import { observer } from 'mobx-react';
+import i18n from '../../i18n';
 
 interface AppBarProps extends MuiAppBarProps {
     theme?: Theme;
@@ -35,6 +36,8 @@ const AppHeader = React.forwardRef<HTMLDivElement, AppHeaderProps>((props, ref) 
     const { t } = useTranslation('app');
     const theme = useTheme();
 
+    const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+
     const [count, setCount] = useState(0);
     const hours = 1;
     const minutes = hours * 60;
@@ -42,6 +45,12 @@ const AppHeader = React.forwardRef<HTMLDivElement, AppHeaderProps>((props, ref) 
     const countdown = seconds - count;
     const countdownMinutes = `${~~(countdown / 60)}`.padStart(2, '0');
     const countdownSeconds = (countdown % 60).toFixed(0).padStart(2, '0');
+
+    const handleLanguageChange = (event: SelectChangeEvent) => {
+        const newLang = event.target.value;
+        i18n.changeLanguage(newLang);
+        setCurrentLanguage(newLang);
+    };
 
     useEffect(() => {
         const timer = setInterval(() => {
@@ -60,6 +69,29 @@ const AppHeader = React.forwardRef<HTMLDivElement, AppHeaderProps>((props, ref) 
                         <Typography variant="h6" component="div" color="primary">
                             {countdownMinutes}:{countdownSeconds}
                         </Typography>
+                    </Box>
+                    <Box sx={{ ml: 2 }}>
+                        <Select
+                            value={currentLanguage}
+                            onChange={handleLanguageChange}
+                            size="small"
+                            sx={{
+                                minWidth: '70px',
+                                color: theme.palette.primary.main,
+                                backgroundColor: 'transparent',
+                                border: `1px solid ${theme.palette.primary.main}`,
+                                '& .MuiSelect-select': {
+                                    py: 0.5,
+                                    px: 1,
+                                },
+                                '& svg': {
+                                    color: theme.palette.primary.main,
+                                },
+                            }}
+                        >
+                            <MenuItem value="en">EN</MenuItem>
+                            <MenuItem value="de">DE</MenuItem>
+                        </Select>
                     </Box>
                     <Box sx={{ width: 20, height: 20, flex: 1 }} />
                     <Box sx={{ flex: 2 }}>
