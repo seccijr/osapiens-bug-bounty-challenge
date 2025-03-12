@@ -360,9 +360,58 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 
 Hope you are able to find what is causing this error, as it is annoying.
 
+#### Solution
+
+The error is caused by the missing key prop in the list of routes in the Root component:
+
+```typescript
+// src/pages/Root/index.tsx
+...
+54   <List>
+55 -     {issues.map((issue) => (
+55 +     {issues.map((issue, key) => (
+56 -         <ListItem>
+56 +         <ListItem key={key}>
+57               <Typography variant="h5" sx={{ p: 2 }}>
+58                   {issue.icon}
+59               </Typography>
+60               <ListItemText primary={issue.title} secondary={issue.description} />
+61           </ListItem>
+62       ))}
+63   </List>
+...
+```
+
 ### The word "known" should be displayed bold in the introduction text.
 
 When implementing a solution, please ensure to not change the i18n text.
+
+#### Solution
+
+The solution is to wrap the translation in a `<Trans>` tag and use <1> tags in localized strings to mark the text that should be bold:
+
+```json
+// src/i18n/en.json
+...
+9 - "intro": "This is a demo application with some glitches and bugs, where we hope that you can finde them. 😃 Here the list of <b>known</b> issues:",
+9 + "intro": "This is a demo application with some glitches and bugs, where we hope that you can finde them. 😃 Here the list of <1>known</1> issues:",
+...
+```
+
+```typescript
+// src/pages/Root/index.tsx
+...
+7 - import { useTranslation } from 'react-i18next';
+7 + import { Trans, useTranslation } from 'react-i18next';
+...
+49 -                {t('home.intro')}
+49 +                <Trans t={t} i18nKey="home.intro">
+50 +                    This is a demo application with some glitches and bugs, where we hope that you can finde them.
+51 +                    😃 Here the list of <b>known</b> issues:
+52 +                </Trans>
+...
+```
+
 
 ### User avatar in app bar is missing, although user should be fetched on app start correctly.
 

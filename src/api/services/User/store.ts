@@ -13,7 +13,7 @@ export interface User {
 }
 
 export default class UserStore {
-    user: User | null = null;
+    user: User = {};
 
     // init function
     constructor() {
