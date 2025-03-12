@@ -2,6 +2,9 @@
 
 ### ERR_OSSL_EVP_UNSUPPORTED
 
+```bash
+$ yarn start
+
 Starting the development server...
 
 Error: error:0308010C:digital envelope routines::unsupported
@@ -39,24 +42,38 @@ Error: error:0308010C:digital envelope routines::unsupported
 Node.js v18.20.3
 error Command failed with exit code 1.
 info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+```
 
-### Solution
+#### Solution
 
 1) Upgrade node
 
 ```bash
-nvm install v22.14.0
+$ nvm install v22.14.0
 ```
 
 2) Use the legacy provider
 
 ```bash
-export NODE_OPTIONS=--openssl-legacy-provider
-yarn start
+$ export NODE_OPTIONS=--openssl-legacy-provider
+$ yarn start
+```
+
+3) Or add the configuration to package.json
+
+```json
+"scripts": {
+    "start": "NODE_OPTIONS=--openssl-legacy-provider react-scripts start",
+    "build": "NODE_OPTIONS=--openssl-legacy-provider react-scripts build",
+    "test": "NODE_OPTIONS=--openssl-legacy-provider react-scripts test --env=jsdom",
+    "eject": "NODE_OPTIONS=--openssl-legacy-provider react-scripts eject"
+},
 ```
 
 ### Error: [BABEL] Requires Babel "^7.16.0", but was loaded with "7.12.3"
 
+```bash
+$ yarn tsct
 Failed to compile.
 
 ./node_modules/@pmmmwh/react-refresh-webpack-plugin/client/ReactRefreshEntry.js
@@ -69,15 +86,16 @@ Error: [BABEL] /home/secci/LocalSpace/osapiens-bug-bounty-challenge/node_modules
     at loadPluginDescriptors.next (<anonymous>)
     at Generator.next (<anonymous>)
     at loadFullConfig.next (<anonymous>)
+```
 
-### Solution
+#### Solution
 
 1) Downgrade caniuse
 
 ```bash
-rm -rf node_modules
-rm yarn.lock
-yarn add caniuse-lite@1.0.30001632
+$ rm -rf node_modules
+$ rm yarn.lock
+$ yarn add caniuse-lite@1.0.30001632
 ```
 
 2) Update package.json
@@ -85,5 +103,253 @@ yarn add caniuse-lite@1.0.30001632
 ```json
 "resolutions": {
     "caniuse-lite": "1.0.30001632"
-  },
+},
+```
+
+### The tsc compiler resturns 1418 errors
+
+The tsc compiler resturns 1418 errors, most likely to tsc not being properly setup.
+
+```bash
+$ yarn tsc
+
+## Outputs 1418 errors
+```
+
+#### Solution
+
+1) Upgrade tsc depdendency
+
+```bash
+$ yarn add -D typescript@latest
+```
+
+### Could not find a declaration file for module 'react-router-dom'. 
+
+```bash
+$ yarn tsc
+src/App.tsx:4:28 - error TS7016: Could not find a declaration file for module 'react-router-dom'. '/home/secci/LocalSpace/osapiens-bug-bounty-challenge/node_modules/react-router-dom/index.js' implicitly has an 'any' type.
+  Try `npm i --save-dev @types/react-router-dom` if it exists or add a new declaration (.d.ts) file containing `declare module 'react-router-dom';`
+
+4 import { HashRouter } from "react-router-dom";
+```
+
+#### Solution
+
+1) Install the types
+
+```bash
+$ yarn add -D @types/react-router-dom @types/react@17.0.30
+```
+
+2) Update package.json
+
+```json
+"resolutions": {
+    "@types/react": "17.0.30"
+},
+```
+
+### Parsing error: Missing semicolon
+
+```bash
+$ yarn start
+
+Failed to compile.
+
+src/api/services/User/store.ts
+  Line 37:11:  Parsing error: Missing semicolon.
+
+  35 |                 )
+  36 |             )
+> 37 |         )) as ResultOrErrorResponse<User>;
+     |           ^
+  38 |
+  39 |         if (!!error) {
+  40 |             return {
+
+src/hooks/useMatchedRoute.tsx
+  Line 73:42:  Parsing error: Unexpected token, expected "}"
+
+  71 |                 <Slide
+  72 |                     in={match ? true : false}
+> 73 |                     direction={direction as 'left' | 'right' | 'up' | 'down'}
+     |                                          ^
+  74 |                     timeout={300}
+  75 |                     unmountOnExit
+  76 |                 >
+
+src/pages/Root/index.tsx
+  Line 31:32:  Parsing error: Missing semicolon.
+
+  29 |   const theme = useTheme();
+  30 |   console.log(user);
+> 31 |   const routes = [...useRoutes] as readonly TRoute[];
+     |                                ^
+  32 |   const [fallbackRoute] = routes;
+  33 |   const Fallback = fallbackRoute.Component;
+  34 |   const { route = fallbackRoute, MatchedElement } = useMatchedRoute(
+
+src/themes/default/index.ts
+  Line 18:5:  Parsing error: Only declares and type imports are allowed inside declare module.
+
+  16 |
+  17 | declare module "@mui/material/styles" {
+> 18 |     interface Theme {
+     |     ^
+  19 |         tokens: OsapiensThemeTokens;
+  20 |     }
+  21 |     interface BreakpointOverrides {
+
+src/utils/router.ts
+  Line 7:5:  Parsing error: Unexpected token
+
+   5 |     params: unknown
+   6 | ): params is PathParams => {
+>  7 |     if (!(params instanceof Object)) return false;
+     |     ^
+   8 |
+   9 |     const paramSet = new Set(Object.keys(params));
+  10 |
+```
+
+#### Solution
+
+1) Update package.json
+
+```json
+"eslintConfig": {
+    "extends": [
+        "react-app"
+    ]
+}
+```
+
+### Further TypeScript compiler errors
+
+```bash
+$ yarn tsc
+yarn run v1.22.22
+warning package.json: No license field
+$ /home/secci/LocalSpace/osapiens-bug-bounty-challenge/node_modules/.bin/tsc
+src/api/services/User/store.ts:48:22 - error TS2551: Property 'urser' does not exist on type 'UserStore'. Did you mean 'user'?
+
+48                 this.urser = result;
+                        ~~~~~
+
+  src/api/services/User/store.ts:16:5
+    16     user: User | null = null;
+           ~~~~
+    'user' is declared here.
+
+src/api/services/index.tsx:1:8 - error TS1192: Module '"/home/secci/LocalSpace/osapiens-bug-bounty-challenge/src/api/services/User/index"' has no default export.
+
+1 import User from "./User";
+         ~~~~
+
+src/components/AppHeader/index.tsx:52:13 - error TS2322: Type 'ForwardedRef<unknown>' is not assignable to type '((instance: HTMLDivElement | null) => void) | RefObject<HTMLDivElement> | null | undefined'.
+  Type 'MutableRefObject<unknown>' is not assignable to type '((instance: HTMLDivElement | null) => void) | RefObject<HTMLDivElement> | null | undefined'.
+    Type 'MutableRefObject<unknown>' is not assignable to type 'RefObject<HTMLDivElement>'.
+      Types of property 'current' are incompatible.
+        Type 'unknown' is not assignable to type 'HTMLDivElement | null'.
+
+52     <AppBar ref={ref} position="fixed" sx={{ width: "100vw" }}>
+               ~~~
+
+  node_modules/@types/react/index.d.ts:818:46
+    818                     ? PropsWithoutRef<P> & { ref?: Exclude<R, string> | undefined }
+                                                     ~~~
+    The expected type comes from property 'ref' which is declared here on type 'IntrinsicAttributes & Omit<PaperProps, "classes" | "color" | "position"> & { classes?: Partial<AppBarClasses> | undefined; color?: OverridableStringUnion<...> | undefined; enableColorOnDark?: boolean | undefined; position?: "fixed" | ... 4 more ... | undefined; sx?: SxProps<...> | undefined; } & ... 4 more ... & { ....'
+
+src/components/AvatarMenu/index.tsx:25:20 - error TS18048: '_' is possibly 'undefined'.
+
+25       .map((_) => (_[0] ? _[0].toLocaleUpperCase() : _))
+                      ~
+
+src/components/AvatarMenu/index.tsx:25:27 - error TS18048: '_' is possibly 'undefined'.
+
+25       .map((_) => (_[0] ? _[0].toLocaleUpperCase() : _))
+                             ~
+
+src/components/AvatarMenu/index.tsx:38:14 - error TS18048: 'user.firstName' is possibly 'undefined'.
+
+38     parseInt(user?.firstName[1] ? user?.firstName[1] : "m", 36) * 7
+                ~~~~~~~~~~~~~~~
+
+
+Found 6 errors in 4 files.
+
+Errors  Files
+     1  src/api/services/User/store.ts:48
+     1  src/api/services/index.tsx:1
+     1  src/components/AppHeader/index.tsx:52
+     3  src/components/AvatarMenu/index.tsx:25
+error Command failed with exit code 2.
+info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this command.
+```
+
+#### Solution
+
+1) Fix the urser TypeScript error
+
+```typescript
+// src/api/services/User/store.ts
+...
+46        if (result) {
+47            runInAction(() => {
+48 -              this.urser = result;
+48 +              this.user = result;
+49            });
+...
+```
+
+2) Fix the type export error
+
+```typescript
+// src/api/services/User/index.tsx
+...
+3 - import Store from './store';
+3 + import User from './store';
+...
+23 + /*
+24 + EXPORTS
+25 + */
+26 + 
+27 + export default User;
+```
+
+```typescript
+// src/api/services/index.tsx
+...
+17 - export default getAllServices();
+17 + export default [
+18 +     User
+19 + ];
+```
+3) Fix the AppHEader ref TypeScript error
+
+```typescript
+// src/components/AppHeader/index.tsx
+...
+32 - const AppHeader = React.forwardRef((props: AppHeaderProps, ref) => {
+32 + const AppHeader = React.forwardRef<HTMLDivElement, AppHeaderProps>((props, ref) => {
+...
+```
+
+4) Fix the '_' is possibly 'undefined' error
+
+```typescript
+// src/components/AvatarMenu/index.tsx
+...
+25 -       .map((_) => (_[0] ? _[0].toLocaleUpperCase() : _))
+25 +       .map((_) => (_ && _[0] ? _[0].toLocaleUpperCase() : _))
+...
+```
+
+```typescript
+// src/components/AvatarMenu/index.tsx
+...
+38 -     parseInt(user?.firstName[1] ? user?.firstName[1] : "m", 36) * 7
+38 +     parseInt(user?.firstName && user?.firstName[1] ? user?.firstName[1] : "m", 36) * 7
+...
 ```
