@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Slide } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useUserStoreContext } from '../../api/services/User';
+import { useUserStore } from '../../api/services/User';
 import AppHeader from '../../components/AppHeader';
 import useMatchedRoute from '../../hooks/useMatchedRoute';
 import { observer } from 'mobx-react';
@@ -23,8 +23,7 @@ const hideSplashScreen = () => {
 
 const Root = () => {
     const { t } = useTranslation('app');
-    const userStore = useUserStoreContext();
-    console.log("UserStore:", userStore);
+    const userStore = useUserStore();
     const theme = useTheme();
     const routes = [...useRoutes] as readonly TRoute[];
     const [fallbackRoute] = routes;

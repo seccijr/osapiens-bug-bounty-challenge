@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 import { User } from '../../api/services/User/store';
 import AvatarMenu from '../AvatarMenu';
 import { observer } from 'mobx-react';
-import { toJS } from 'mobx';
 
 interface AppBarProps extends MuiAppBarProps {
     theme?: Theme;

@@ -5,7 +5,6 @@ import UserStore from './store';
 /* 
 CONTEXT / PROVIDER INIT
 */
-
 const UserStoreContext = createContext<UserStore | null>(null);
 
 export const StoreProvider: React.FC = (props) => {
@@ -17,7 +16,7 @@ export const StoreProvider: React.FC = (props) => {
 /* 
 HOOK DEFINITION
 */
-export const useUserStoreContext = () => useContext(UserStoreContext);
+export const useUserStore = () => useContext(UserStoreContext);
 
 /*
 EXPORTS
