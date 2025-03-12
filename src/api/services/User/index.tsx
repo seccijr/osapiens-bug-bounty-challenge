@@ -1,27 +1,25 @@
 import React, { createContext, useContext } from 'react';
 
-import User from './store';
+import UserStore from './store';
 
 /* 
 CONTEXT / PROVIDER INIT
 */
 
-const UserStoreContext = createContext<User | null>(null);
+const UserStoreContext = createContext<UserStore | null>(null);
 
 export const StoreProvider: React.FC = (props) => {
     const { children } = props;
 
-    return <UserStoreContext.Provider value={new User()}>{children}</UserStoreContext.Provider>;
+    return <UserStoreContext.Provider value={new UserStore()}>{children}</UserStoreContext.Provider>;
 };
 
 /* 
 HOOK DEFINITION
 */
-
-export const useUserStore = () => useContext(UserStoreContext);
+export const useUserStoreContext = () => useContext(UserStoreContext);
 
 /*
 EXPORTS
 */
-
-export default User;
+export default UserStore;

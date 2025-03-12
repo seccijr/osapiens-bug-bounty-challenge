@@ -1,4 +1,4 @@
-import { makeAutoObservable, runInAction } from "mobx";
+import { makeAutoObservable, runInAction, configure } from "mobx";
 import {
     ActionError,
     ActionResultStatus,
@@ -12,8 +12,16 @@ export interface User {
     eMail?: string;
 }
 
+configure({
+    enforceActions: "always",
+});
+
 export default class UserStore {
-    user: User = {};
+    user: User = {
+        firstName: '',
+        lastName: '',
+        eMail: '',
+    };
 
     // init function
     constructor() {

@@ -5,6 +5,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { User } from '../../api/services/User/store';
 import AvatarMenu from '../AvatarMenu';
+import { observer } from 'mobx-react';
+import { toJS } from 'mobx';
 
 interface AppBarProps extends MuiAppBarProps {
     theme?: Theme;
@@ -78,11 +80,13 @@ const AppHeader = React.forwardRef<HTMLDivElement, AppHeaderProps>((props, ref) 
                         </Typography>
                     </Box>
                     <Box sx={{ flex: 1, justifyContent: 'flex-end', display: 'flex' }}>
-                        {user && user.eMail && (
-                            <Grow in={Boolean(user && user.eMail)}>
-                                <AvatarMenu user={user} />
-                            </Grow>
-                        )}
+                        {/* Always render the Grow component, but control its visibility */}
+                        <Grow in={Boolean(user && user.eMail)} style={{ transformOrigin: '0 0 0' }}>
+                            <div>
+                                {/* Only render AvatarMenu when user data is available */}
+                                {user && user.eMail ? <AvatarMenu user={user} /> : <div />}
+                            </div>
+                        </Grow>
                     </Box>
                 </Box>
             </Toolbar>
@@ -90,4 +94,4 @@ const AppHeader = React.forwardRef<HTMLDivElement, AppHeaderProps>((props, ref) 
     );
 });
 
-export default AppHeader;
+export default observer(AppHeader);

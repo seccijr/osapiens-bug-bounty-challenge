@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Slide } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { useUserStore } from '../../api/services/User';
+import { useUserStoreContext } from '../../api/services/User';
 import AppHeader from '../../components/AppHeader';
 import useMatchedRoute from '../../hooks/useMatchedRoute';
 import { observer } from 'mobx-react';
@@ -23,8 +23,8 @@ const hideSplashScreen = () => {
 
 const Root = () => {
     const { t } = useTranslation('app');
-    const userStore = useUserStore();
-    const { user } = userStore || {};
+    const userStore = useUserStoreContext();
+    console.log("UserStore:", userStore);
     const theme = useTheme();
     const routes = [...useRoutes] as readonly TRoute[];
     const [fallbackRoute] = routes;
@@ -46,10 +46,10 @@ const Root = () => {
     }, []);
 
     useEffect(() => {
-        if (!user && userStore) {
+        if (userStore) {
             userStore.getOwnUser();
         }
-    }, [user, userStore]);
+    }, [userStore]);
 
     if (accessDenied) {
         return <AccessDenied />;
@@ -80,7 +80,7 @@ const Root = () => {
                 }}
             >
                 <Slide direction="down" in={!loadingApp} mountOnEnter>
-                    <AppHeader user={user || {}} pageTitle={pageTitle} />
+                    <AppHeader user={userStore ? userStore.user : {}} pageTitle={pageTitle} />
                 </Slide>
                 <Box
                     component="main"

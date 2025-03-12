@@ -1,4 +1,4 @@
-import User from './User';
+import UserStore from './User';
 
 const requireAllServices = (ctx: any): React.FC<any>[] => {
     const keys = ctx.keys();
@@ -15,5 +15,5 @@ const getAllServices = (): React.FC<any>[] => {
 };
 
 export default [
-    User
+    UserStore
 ];
