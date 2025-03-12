@@ -46,20 +46,20 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 
 #### Solution
 
-1) Upgrade node
+1) **Upgrade node**
 
 ```bash
 $ nvm install v22.14.0
 ```
 
-2) Use the legacy provider
+2) **Use the legacy provider**
 
 ```bash
 $ export NODE_OPTIONS=--openssl-legacy-provider
 $ yarn start
 ```
 
-3) Or add the configuration to package.json
+3) **Or add the configuration to package.json**
 
 ```json
 "scripts": {
@@ -90,7 +90,7 @@ Error: [BABEL] /home/secci/LocalSpace/osapiens-bug-bounty-challenge/node_modules
 
 #### Solution
 
-1) Downgrade caniuse
+1) **Downgrade caniuse**
 
 ```bash
 $ rm -rf node_modules
@@ -98,7 +98,7 @@ $ rm yarn.lock
 $ yarn add caniuse-lite@1.0.30001632
 ```
 
-2) Update package.json
+2) **Update package.json**
 
 ```json
 "resolutions": {
@@ -118,7 +118,7 @@ $ yarn tsc
 
 #### Solution
 
-1) Upgrade tsc depdendency
+1) **Upgrade tsc depdendency**
 
 ```bash
 $ yarn add -D typescript@latest
@@ -136,13 +136,13 @@ src/App.tsx:4:28 - error TS7016: Could not find a declaration file for module 'r
 
 #### Solution
 
-1) Install the types
+1) **Install the types**
 
 ```bash
 $ yarn add -D @types/react-router-dom @types/react@17.0.30
 ```
 
-2) Update package.json
+2) **Update package.json**
 
 ```json
 "resolutions": {
@@ -215,7 +215,7 @@ src/utils/router.ts
 
 #### Solution
 
-1) Update package.json
+1) **Update package.json**
 
 ```json
 "eslintConfig": {
@@ -290,7 +290,7 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 
 #### Solution
 
-1) Fix the urser TypeScript error
+1) **Fix the urser TypeScript error**
 
 ```typescript
 // src/api/services/User/store.ts
@@ -303,7 +303,7 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 ...
 ```
 
-2) Fix the type export error
+2) **Fix the type export error**
 
 ```typescript
 // src/api/services/User/index.tsx
@@ -326,7 +326,7 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 18 +     User
 19 + ];
 ```
-3) Fix the AppHEader ref TypeScript error
+3) **Fix the AppHEader ref TypeScript error**
 
 ```typescript
 // src/components/AppHeader/index.tsx
@@ -336,7 +336,7 @@ info Visit https://yarnpkg.com/en/docs/cli/run for documentation about this comm
 ...
 ```
 
-4) Fix the '_' is possibly 'undefined' error
+4) **Fix the '_' is possibly 'undefined' error**
 
 ```typescript
 // src/components/AvatarMenu/index.tsx
@@ -412,10 +412,61 @@ The solution is to wrap the translation in a `<Trans>` tag and use <1> tags in l
 ...
 ```
 
-
 ### User avatar in app bar is missing, although user should be fetched on app start correctly.
 
 On app start we load the current user object via a MobX store, but for any reason the user avatar is not displayed in the top right of the app bar. Attention: When solving this issue, you might will be confronted with a second bug.
+
+#### Solution
+
+The user avatar was missing due to several issues with MobX reactivity and component rendering:
+
+1) **Missing MobX observer**: The `AppHeader` component wasn't wrapped with the `observer` HOC, which is necessary for components to react to MobX state changes:
+
+```typescript
+// Wrap component with observer to make it reactive to MobX changes
+export default observer(AppHeader);
+```
+
+2) **Improper user object initialization**: The initial user object was empty which caused issues with property access:
+
+```typescript
+// Changed from empty object to object with empty string properties
+user: User = {
+    firstName: '',
+    lastName: '',
+    eMail: '',
+};
+```
+
+3) **Conditional rendering issues**: The avatar component rendering logic needed to be restructured:
+
+```typescript
+{/* Always render the Grow component, but control its visibility */}
+<Grow in={Boolean(user && user.eMail)} style={{ transformOrigin: '0 0 0' }}>
+    <div>
+        {/* Only render AvatarMenu when user data is available */}
+        {user && user.eMail ? <AvatarMenu user={user} /> : <div />}
+    </div>
+</Grow>
+```
+
+4) **User data fetching logic**: The effect that fetches the user data needed to be simplified to ensure it always runs when the store is available:
+
+```typescript
+useEffect(() => {
+    if (userStore) {
+        userStore.getOwnUser();
+    }
+}, [userStore]);
+```
+
+5) **Proper data passing**: Directly pass the user object from the store instead of destructuring it:
+
+```typescript
+<AppHeader user={userStore ? userStore.user : {}} pageTitle={pageTitle} />
+```
+
+These changes ensure that the user data is properly fetched, the component reacts to state changes, and the avatar is displayed correctly when user data is available.
 
 ### Optional: Countdown is broken sometimes (hard to reproduce).
 
