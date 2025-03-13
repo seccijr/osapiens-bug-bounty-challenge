@@ -6,7 +6,7 @@
     },
     "home": {
         "welcome": "Willkommen!",
-        "intro": "Dies ist eine Demo-Anwendung mit einigen Glitches und Bugs, bei denen wir hoffen, dass du sie finden kannst. 😃 Hier die Liste der <1>bekannten</1> Probleme:",
+        "intro": "Dies ist eine Demo-Anwendung mit einigen Glitches und Bugs, bei denen wir hoffen, dass du sie finden kannst. 😃 Hier die Liste der <b>bekannten</b> Probleme:",
         "sidenote": "Alle Bugs haben unterschiedliche Komplexitätsstufen und sind alle ziemlich üblich (reale Probleme für jeden React-Entwickler). Um alle offenen Punkte zu lösen, ist ein unterschiedliches Set an Fähigkeiten erforderlich: Recherche, Erfahrung, Lesen von Dokumentationen und Fehlermeldungen, Kreativität und analytisches Denken."
     }
 }

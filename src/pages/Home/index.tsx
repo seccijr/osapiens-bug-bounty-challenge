@@ -1,10 +1,9 @@
-import { Box, Container, Typography } from '@mui/material';
 import { observer } from 'mobx-react';
-import React from 'react';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { Trans, useTranslation } from 'react-i18next';
+import { Box, Container, Typography } from '@mui/material';
 
 const Home = () => {
     const { t } = useTranslation('app');
@@ -46,7 +45,7 @@ const Home = () => {
                     <Trans t={t} i18nKey="home.welcome">Welcome!</Trans>
                 </Typography>
                 <Typography variant="subtitle1" textAlign="center">
-                    <Trans t={t} i18nKey="home.intro">
+                    <Trans t={t} i18nKey="home.intro" components={{ b: <b /> }}>
                         This is a demo application with some glitches and bugs, where we hope that you can finde them.
                         😃 Here the list of <b>known</b> issues:
                     </Trans>
